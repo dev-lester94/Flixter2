@@ -2,15 +2,20 @@ package com.example.flixter2.adapters
 
 import android.content.Context
 import android.content.res.Configuration
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
+import com.example.flixter2.fragments.MovieFragmentDirections
 import com.example.flixter2.models.Movie
 
 class MovieAdapter(private var movies: List<Movie>, private val context: Context): RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
@@ -55,28 +60,11 @@ class MovieAdapter(private var movies: List<Movie>, private val context: Context
         fun bind(movie: Movie) {
 
 
-                //invalidateAll()
-                binding.movie =movie
-                //tvTitle.text = movie.title
-
-                binding.executePendingBindings()
-
-
-            //binding.tvTitle.text = movie.title
-            //binding.movie = movie
-            //binding.movie?.title = movie.title
-
-            //binding.tvTitle.text = movie.title
-            //binding.executePendingBindings()
-
-
-
-
             //invalidateAll()
-
+            binding.movie =movie
             //tvTitle.text = movie.title
 
-            //tvOverview.text = movie.overview
+            binding.executePendingBindings()
 
             lateinit var image: String
             val orientation = context.resources.configuration.orientation
@@ -88,6 +76,14 @@ class MovieAdapter(private var movies: List<Movie>, private val context: Context
                 // ...
             }
             Glide.with(context).load(image).into(binding.ivPoster)
+
+            binding.container.setOnClickListener {
+                //Toast.makeText(context,"clicked row", Toast.LENGTH_SHORT).show()
+
+                //val movieString: String = movie.toString()
+                //Log.i("TAG", movieString)
+                it.findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
+            }
 
 
 

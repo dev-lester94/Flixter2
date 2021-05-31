@@ -82,4 +82,6 @@ class MovieFragment : Fragment() {
         return binding.root
     }
 
+
+
 }

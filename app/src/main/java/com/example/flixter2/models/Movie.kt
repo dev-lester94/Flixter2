@@ -1,27 +1,39 @@
 package com.example.flixter2.models
 
+import android.annotation.SuppressLint
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+
+import kotlinx.android.parcel.RawValue
+import kotlinx.serialization.Serializable
 import org.json.JSONArray
 import org.json.JSONObject
+import org.parceler.Parcel
 
-class Movie(jsonObject: JSONObject) {
 
 
-    var title: String = jsonObject.getString("title")
+@Parcelize
+class Movie(private val tempTitle: String, private val tempOverview: String, private val tempPosterPath: String,
+            private val tempBackDrop: String, private val tempRating: Double, private val tempMovieId: Int): Parcelable{
+
+
+    var title: String = tempTitle
         get() = field
-    var overview: String = jsonObject.getString("overview")
+    var overview: String = tempOverview
         get() = field
 
-    var posterPath: String = String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("poster_path"))
+    var posterPath: String = tempPosterPath
+        get() = String.format("https://image.tmdb.org/t/p/w342/%s", field)
+
+    var backdropPath: String = tempBackDrop
+        get() = String.format("https://image.tmdb.org/t/p/w342/%s", field)
+
+    var rating: Float = tempRating.toFloat()
         get() = field
 
-    var backdropPath: String = String.format("https://image.tmdb.org/t/p/w342/%s", jsonObject.getString("backdrop_path"))
+    var movieId: Int = tempMovieId
         get() = field
-
-    init{
-        //title = jsonObject.getString("title")
-        //posterPath = jsonObject.getString("poster_path")
-        //overview = jsonObject.getString("overview")
-    }
 
 
 
@@ -29,13 +41,19 @@ class Movie(jsonObject: JSONObject) {
         fun fromJsonArray(movieJsonArray: JSONArray): ArrayList<Movie> {
             var movies: ArrayList<Movie> = arrayListOf()
             for (i in 0 until movieJsonArray.length()) {
-                movies.add(Movie(movieJsonArray.getJSONObject(i)))
+                var title: String = movieJsonArray.getJSONObject(i).getString("title")
+                var overview: String = movieJsonArray.getJSONObject(i).getString("overview")
+                var posterPath: String = movieJsonArray.getJSONObject(i).getString("poster_path")
+                var backdropPath: String = movieJsonArray.getJSONObject(i).getString("backdrop_path")
+
+                var rating: Double = movieJsonArray.getJSONObject(i).getDouble("vote_average")
+                var movieId: Int = movieJsonArray.getJSONObject(i).getInt("id")
+                movies.add(Movie(title, overview, posterPath, backdropPath, rating, movieId))
             }
 
             return movies
         }
     }
-
 
 
 }
