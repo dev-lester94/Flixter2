@@ -17,7 +17,6 @@ import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
 import com.example.flixter2.fragments.MovieFragmentDirections
 import com.example.flixter2.models.Movie
-import org.json.JSONObject
 
 class MovieAdapter(private var movies: List<Movie>, private val context: Context): RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
 

@@ -15,7 +15,7 @@ import org.parceler.Parcel
 
 @Parcelize
 class Movie(private val tempTitle: String, private val tempOverview: String, private val tempPosterPath: String,
-            private val tempBackDrop: String, private val tempRating: Double): Parcelable{
+            private val tempBackDrop: String, private val tempRating: Double, private val tempMovieId: Int): Parcelable{
 
 
     var title: String = tempTitle
@@ -32,6 +32,9 @@ class Movie(private val tempTitle: String, private val tempOverview: String, pri
     var rating: Float = tempRating.toFloat()
         get() = field
 
+    var movieId: Int = tempMovieId
+        get() = field
+
 
 
     companion object{
@@ -44,7 +47,8 @@ class Movie(private val tempTitle: String, private val tempOverview: String, pri
                 var backdropPath: String = movieJsonArray.getJSONObject(i).getString("backdrop_path")
 
                 var rating: Double = movieJsonArray.getJSONObject(i).getDouble("vote_average")
-                movies.add(Movie(title, overview, posterPath, backdropPath, rating))
+                var movieId: Int = movieJsonArray.getJSONObject(i).getInt("id")
+                movies.add(Movie(title, overview, posterPath, backdropPath, rating, movieId))
             }
 
             return movies

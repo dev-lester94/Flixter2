@@ -8,17 +8,32 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
+import com.codepath.asynchttpclient.AsyncHttpClient
+import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.example.flixter2.R
 import com.example.flixter2.databinding.FragmentDetailBinding
-import com.google.android.youtube.player.YouTubePlayerFragment
-import com.google.android.youtube.player.YouTubePlayerSupportFragment
+import com.example.flixter2.models.Movie
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
+import okhttp3.Headers
+import org.json.JSONArray
+import org.json.JSONObject
+import kotlin.properties.Delegates
 
 
 class DetailFragment : Fragment() {
 
     val TAG: String = "DetailFragment"
     val YOUTUBE_API_KEY: String =  "AIzaSyCzznGRbunINCP989cE7Q599Ds_aCfw5Sk"
+    val VIDEOS_URL = "https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
+
+    lateinit var videoId: String
+    var seconds by Delegates.notNull<Float>()
+
+    lateinit var youTubePlayerView: YouTubePlayerView
+
+    //lateinit var youTubePlayerFragment: YouTubePlayerFragment
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,92 +51,55 @@ class DetailFragment : Fragment() {
 
         (activity as AppCompatActivity).supportActionBar?.title = "Details"
 
-        /*val youtubePlayerSupportFragment = YoutubeFragment.newInstance("5xVh-7ywKpE")
-        fragmentManager?.beginTransaction()
-            .reo(R.id.container, youtubePlayerSupportFragment).commit()*/
+        youTubePlayerView = binding.youtubePlayerView
+        lifecycle.addObserver(youTubePlayerView)
 
-
-        val youtubeFragment = YoutubeFragment.newInstance("5xVh-7ywKpE")
-        val transaction = requireFragmentManager().beginTransaction()
-        transaction.add(R.id.container, youtubeFragment)
-        transaction.commit()
-
-
-
-
-        /*val youtubeSupportFragment =
-            childFragmentManager.findFragmentById(R.id.youtube_fragment) as YouTubePlayerFragment?
-        youtubeSupportFragment?.initialize(YOUTUBE_API_KEY,
-            object : YouTubePlayer.OnInitializedListener {
-                override fun onInitializationSuccess(
-                    provider: YouTubePlayer.Provider,
-                    youTubePlayer: YouTubePlayer, b: Boolean
-                ) {
-                    // do any work here to cue video, play video, etc.
-                    youTubePlayer.cueVideo("5xVh-7ywKpE")
+        val client: AsyncHttpClient = AsyncHttpClient()
+        client.get(String.format(VIDEOS_URL, args.movie.movieId), object: JsonHttpResponseHandler(){
+            override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON?) {
+                Log.d(TAG,"onSuccess")
+                val jsonObject: JSONObject = json!!.jsonObject
+                val results: JSONArray = jsonObject.getJSONArray("results")
+                if(results.length() == 0){
+                    return
                 }
 
-                override fun onInitializationFailure(
-                    provider: YouTubePlayer.Provider,
-                    youTubeInitializationResult: YouTubeInitializationResult
-                ) {
-                }
-            })*/
+                videoId = results.getJSONObject(0).getString("key")
+                initializeYoutube()
 
-        /*val onInitializedListener: YouTubePlayer.OnInitializedListener =
-            object : YouTubePlayer.OnInitializedListener {
-                override fun onInitializationSuccess(
-                    provider: YouTubePlayer.Provider,
-                    youTubePlayer: YouTubePlayer,
-                    b: Boolean
-                ) {
-                    youTubePlayer.cueVideo("5xVh-7ywKpE");
 
-                }
-
-                override fun onInitializationFailure(
-                    provider: YouTubePlayer.Provider,
-                    youTubeInitializationResult: YouTubeInitializationResult
-                ) {
-                }
             }
 
-        val youtubeFragment =
-            requireFragmentManager().findFragmentById(R.id.player) as YouTubePlayerFragment?
-
-        if (youtubeFragment != null) {
-            youtubeFragment.initialize(YOUTUBE_API_KEY, onInitializedListener)
-        }*/
-
-
-        //val youTubePlayerFragment = fragmentManager!!.findFragmentById(R.id.youtube_fragment) as YouTubePlayerFragment?
-        //youTubePlayerFragment!!.initialize("You_Developer_Api_Key", onInitializedListener)
-        //val youTubePlayerFragment: YouTubePlayerFragment? = childFragmentManager!!.findFragmentById(R.id.player) as YouTubePlayerFragment?
-        //youTubePlayerFragment!!.initialize(YOUTUBE_API_KEY, onInitializedListener)
-
-        //val currentFragment = NavHostFragment.findNavController(R.id.my).currentDestination?.id
-
-        //binding.player as YouTubePlayerFragment
+            override fun onFailure(statusCode: Int, headers: Headers?, response: String?, throwable: Throwable?) {
+                Log.d(TAG,"onFailure")
+            }
+        })
 
 
 
-        //val childFragment = childFragmentManager.findFragmentByTag("fragment_sheet_home") as? YouTubePlayerFragment ?
-        //val navHostFragment: Fragment? = fragmentManager?.findFragmentById(R.id.myNavHostFragment)
-
-
-        //val youTubePlayerFragment = binding.player as YouTubePlayerFragment?
-        //youTubePlayerFragment!!.initialize(YOUTUBE_API_KEY, onInitializedListener)
-
-        //val youTubePlayerFragment = YouTubePlayerSupportFragment
-
-
-        //val movieJSONObject: JSONObject = JSONObject(args.movieString)
-        //Log.i(TAG, movieJSONObject.toString())
-
-
-        Log.i("hello", "hello")
 
         return binding.root
+    }
+
+    private fun initializeYoutube() {
+        youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+            override fun onReady(youTubePlayer: YouTubePlayer) {
+
+                //youTubePlayerView.videoId
+                Log.i(TAG, videoId)
+
+                youTubePlayer.loadVideo(videoId, 0F)
+
+            }
+        })
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("videoId", videoId)
+
+        //youTubePlayerView.getPlayerUiController().getMenu().
+        //outState.putFloat("seconds", seconds)
     }
 
 
