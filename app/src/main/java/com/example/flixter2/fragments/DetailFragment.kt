@@ -41,9 +41,9 @@ class DetailFragment : Fragment() {
             .reo(R.id.container, youtubePlayerSupportFragment).commit()*/
 
 
-        val youtubePlayerSupportFragment = YoutubeFragment.newInstance("5xVh-7ywKpE")
+        val youtubeFragment = YoutubeFragment.newInstance("5xVh-7ywKpE")
         val transaction = requireFragmentManager().beginTransaction()
-        transaction.add(R.id.container, youtubePlayerSupportFragment)
+        transaction.add(R.id.container, youtubeFragment)
         transaction.commit()
 
 
