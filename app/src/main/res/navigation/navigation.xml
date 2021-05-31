@@ -8,6 +8,17 @@
     <fragment
         android:id="@+id/movieFragment"
         android:name="com.example.flixter2.fragments.MovieFragment"
-        android:label="fragment_movie"
-        tools:layout="@layout/fragment_movie" />
+        tools:layout="@layout/fragment_movie" >
+        <action
+            android:id="@+id/action_movieFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.flixter2.fragments.DetailFragment"
+        >
+        <argument
+            android:name="Movie"
+            app:argType="com.example.flixter2.models.Movie"/>
+    </fragment>
 </navigation>
