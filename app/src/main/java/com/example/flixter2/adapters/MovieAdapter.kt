@@ -11,51 +11,45 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
-import com.example.flixter2.fragments.MovieFragmentDirections
+import com.example.flixter2.fragments.movie.MovieFragmentDirections
 import com.example.flixter2.models.Movie
 
-class MovieAdapter(private var movies: List<Movie>, private val context: Context): RecyclerView.Adapter<MovieAdapter.ViewHolder>() {
+class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallBack()) {
 
     //lateinit var binding: ItemMovieBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         //context = parent.context
-        val inflater = LayoutInflater.from(context)
-        //val movieView = inflater.inflate(R.layout.item_movie, parent, false)
-
-        val binding : ItemMovieBinding = DataBindingUtil.inflate(inflater, R.layout.item_movie, parent, false);
-
-        return ViewHolder(binding)
+        return ViewHolder.from(parent)
 
         //val binding = ItemMovieBinding.inflate(inflater)
         //return ViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val movie: Movie = movies.get(position)
+        val movie: Movie = getItem(position)
         holder.bind(movie)
     }
 
-    override fun getItemCount(): Int {
-        return movies.size
-    }
 
-    fun updateMovies(updateMovieList: ArrayList<Movie>) {
-        movies = updateMovieList
-    }
+   class ViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
 
+        companion object {
+            fun from(parent: ViewGroup): ViewHolder {
+                val inflater = LayoutInflater.from(parent.context)
 
-    inner class ViewHolder(private val binding: ItemMovieBinding) : RecyclerView.ViewHolder(binding.root) {
+                val binding: ItemMovieBinding =
+                    DataBindingUtil.inflate(inflater, R.layout.item_movie, parent, false);
 
-
-
-        //val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
-        //val tvOverview = itemView.findViewById<TextView>(R.id.tvOverview)
-        //val ivPoster = itemView.findViewById<ImageView>(R.id.ivPoster)
+                return ViewHolder(binding)
+            }
+        }
 
         fun bind(movie: Movie) {
 
@@ -66,16 +60,7 @@ class MovieAdapter(private var movies: List<Movie>, private val context: Context
 
             binding.executePendingBindings()
 
-            lateinit var image: String
-            val orientation = context.resources.configuration.orientation
-            if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-                image = movie.posterPath
-                // ...
-            } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-                image = movie.backdropPath
-                // ...
-            }
-            Glide.with(context).load(image).into(binding.ivPoster)
+
 
             binding.container.setOnClickListener {
                 //Toast.makeText(context,"clicked row", Toast.LENGTH_SHORT).show()
@@ -90,6 +75,16 @@ class MovieAdapter(private var movies: List<Movie>, private val context: Context
         }
 
     }
+}
 
+class MovieDiffCallBack : DiffUtil.ItemCallback<Movie>() {
+    //Two items represent the same movie (id)
+    override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+        return oldItem.movieId == newItem.movieId
+    }
 
+    //Two items that have the same content
+    override fun areContentsTheSame(oldItem: Movie, newItem: Movie): Boolean {
+        return oldItem == newItem
+    }
 }
