@@ -21,13 +21,6 @@ class MovieFragment : Fragment() {
 
     private lateinit var viewModel: MovieViewModel;
 
-    val NOW_PLAY_URL: String = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
-    val TAG: String = "MovieFragment"
-
-
-    lateinit var adapter: MovieAdapter;
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,23 +31,17 @@ class MovieFragment : Fragment() {
         val binding: FragmentMovieBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_movie, container, false)
 
+        // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
-        //Lookup for the recyelerview in binding object
-        //val rvMovies = binding.rvMovies
-
+        // Giving the binding access to the OverviewViewModel
         viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
         binding.viewModel = viewModel
-        //adapter = MovieAdapter()
-        //binding.rvMovies.adapter = adapter
 
-       ///rvMovies.layoutManager = LinearLayoutManager(activity as AppCompatActivity)
 
-        /*viewModel.movies.observe(viewLifecycleOwner, Observer {
-            //Log.i(TAG, it.size.toString())
-            adapter.submitList(it)
+        binding.rvMovies.adapter = MovieAdapter()
 
-        })*/
+
 
         return binding.root
     }

@@ -11,8 +11,8 @@ import com.example.flixter2.models.Movie
 
 @BindingAdapter("listData")
 fun bindRecyclerView(recyclerView: RecyclerView, data: List<Movie>?) {
-    val adapter = MovieAdapter()
-    recyclerView.adapter = adapter
+    val adapter = recyclerView.adapter as MovieAdapter
+    //recyclerView.adapter = adapter
     //val adapter = recyclerView.adapter as MovieAdapter
     adapter.submitList(data)
 }
