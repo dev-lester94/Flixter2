@@ -14,7 +14,7 @@ import org.parceler.Parcel
 
 
 @Parcelize
-class Movie(private val tempTitle: String, private val tempOverview: String, private val tempPosterPath: String,
+data class Movie(private val tempTitle: String, private val tempOverview: String, private val tempPosterPath: String,
             private val tempBackDrop: String, private val tempRating: Double, private val tempMovieId: Int): Parcelable{
 
 
@@ -22,6 +22,8 @@ class Movie(private val tempTitle: String, private val tempOverview: String, pri
         get() = field
     var overview: String = tempOverview
         get() = field
+
+
 
     var posterPath: String = tempPosterPath
         get() = String.format("https://image.tmdb.org/t/p/w342/%s", field)

@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/movieFragment"
-        android:name="com.example.flixter2.fragments.MovieFragment"
+        android:name="com.example.flixter2.fragments.movie.MovieFragment"
         tools:layout="@layout/fragment_movie" >
         <action
             android:id="@+id/action_movieFragment_to_detailFragment"
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.flixter2.fragments.DetailFragment"
+        android:name="com.example.flixter2.fragments.details.DetailFragment"
         >
         <argument
             android:name="Movie"

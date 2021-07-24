@@ -1,4 +1,4 @@
-package com.example.flixter2.fragments
+package com.example.flixter2.fragments.details
 
 import android.os.Bundle
 import android.util.Log
@@ -132,6 +132,8 @@ class DetailFragment : Fragment() {
         outState.putString("videoId", tracker.videoId)
         outState.putFloat("seconds", tracker.currentSecond)
         //youTubePlayerGlobal.pause()
+
+
         outState.putBoolean("orientation",true)
 
         //youTubePlayerView.getPlayerUiController().getMenu().
