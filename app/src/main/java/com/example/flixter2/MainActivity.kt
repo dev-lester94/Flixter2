@@ -6,7 +6,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.flixter2.databinding.ActivityMainBinding
-import com.google.android.youtube.player.YouTubeBaseActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
