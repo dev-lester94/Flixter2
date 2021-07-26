@@ -7,26 +7,50 @@ import androidx.lifecycle.ViewModel
 import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.example.flixter2.models.Movie
+import com.example.flixter2.network.MovieApi
 import okhttp3.Headers
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MovieViewModel: ViewModel() {
 
     private val NOW_PLAY_URL: String = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
     private val TAG: String = "MovieViewModel"
+
     private val _movies = MutableLiveData<ArrayList<Movie>>()
 
     val movies: LiveData<ArrayList<Movie>>
         get() = _movies
 
+    private val _response = MutableLiveData<String>()
+    val response: LiveData<String>
+        get() = _response
+
+
 
     init {
         Log.i(TAG, "Initialize")
         //_movies.value = arrayListOf()
-        getLatestMovies()
+        //getLatestMovies()
+        getLatestMovies2()
     }
 
+    private fun getLatestMovies2() {
+        MovieApi.retrofitService.getLatestMovies("a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object: Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+
+                _response.value = response.body()
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                _response.value = "Failure: " + t.message
+            }
+
+        })
+    }
 
 
     override fun onCleared() {
