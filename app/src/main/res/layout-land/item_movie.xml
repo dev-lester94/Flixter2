@@ -8,7 +8,7 @@
     <data>
         <variable
             name="movie"
-            type="com.example.flixter2.models.Movie" />
+            type="com.example.flixter2.network.Movie" />
     </data>
 
 
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:textSize="24sp"
-            android:text="@={movie.title}"
+            android:text="@{movie.title}"
             android:textColor="@color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -48,7 +48,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="5dp"
-            android:text="@={movie.overview}"
+            android:text="@{movie.overview}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/ivPoster"
             app:layout_constraintTop_toBottomOf="@+id/tvTitle"

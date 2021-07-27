@@ -4,16 +4,19 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.codepath.asynchttpclient.AsyncHttpClient
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
-import com.example.flixter2.models.Movie
+import com.example.flixter2.network.LatestMovies
+import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApi
-import okhttp3.Headers
-import org.json.JSONArray
-import org.json.JSONObject
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
+enum class MovieApiStatus { LOADING, ERROR, DONE }
+
 
 class MovieViewModel: ViewModel() {
 
@@ -29,25 +32,40 @@ class MovieViewModel: ViewModel() {
     val response: LiveData<String>
         get() = _response
 
+    private val _status = MutableLiveData<MovieApiStatus>()
+    val status: LiveData<MovieApiStatus>
+        get() = _status
+
 
 
     init {
         Log.i(TAG, "Initialize")
         //_movies.value = arrayListOf()
         //getLatestMovies()
-        getLatestMovies2()
+        getLatestMovies()
     }
 
-    private fun getLatestMovies2() {
-        MovieApi.retrofitService.getLatestMovies("a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object: Callback<String> {
-            override fun onResponse(call: Call<String>, response: Response<String>) {
+    private fun getLatestMovies() {
 
-                _response.value = response.body()
+        _status.value = MovieApiStatus.LOADING
+
+        MovieApi.retrofitService.getLatestMovies("a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object:
+            Callback<LatestMovies> {
+            override fun onResponse(call: Call<LatestMovies>, response: Response<LatestMovies>) {
+                _status.value = MovieApiStatus.DONE
+                val lastestMovies = response.body()?.results
+                _movies.value = (lastestMovies as ArrayList<Movie>?)!!
+
+                //_response.value = "Success: ${lastestMovies} Mars properties retrieved"
             }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                _response.value = "Failure: " + t.message
+            override fun onFailure(call: Call<LatestMovies>, t: Throwable) {
+                _status.value = MovieApiStatus.ERROR
+                //_response.value = "Failure: " + t.message
+                _movies.value = ArrayList()
+
             }
+
 
         })
     }
@@ -58,25 +76,4 @@ class MovieViewModel: ViewModel() {
         Log.i(TAG, "onCleared")
     }
 
-    private fun getLatestMovies() {
-        val client: AsyncHttpClient = AsyncHttpClient()
-        client.get(NOW_PLAY_URL, object: JsonHttpResponseHandler(){
-            override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON?) {
-                Log.d(TAG,"onSuccess")
-                val jsonObject: JSONObject = json!!.jsonObject
-                val results: JSONArray = jsonObject.getJSONArray("results")
-                Log.i(TAG,results.toString())
-
-                _movies.value = Movie.fromJsonArray(results)
-
-                Log.i(TAG, "Movies: "  + (_movies.value?.size ?: 0))
-
-
-            }
-
-            override fun onFailure(statusCode: Int, headers: Headers?, response: String?, throwable: Throwable?) {
-                Log.d(TAG,"onFailure")
-            }
-        })
-    }
 }

@@ -6,10 +6,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
-import com.example.flixter2.models.Movie
+import com.example.flixter2.network.Movie
+import com.example.flixter2.network.YoutubeApi
+import com.example.flixter2.network.YoutubeVideos
 import okhttp3.Headers
 import org.json.JSONArray
 import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class DetailViewModel(movie: Movie): ViewModel() {
 
@@ -17,9 +22,9 @@ class DetailViewModel(movie: Movie): ViewModel() {
         "https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
     val TAG = "DetailViewModel"
 
-    private val _videoId = MutableLiveData<String>()
-    val videoId: LiveData<String>
-        get() = _videoId
+    private var _youtubeKey = MutableLiveData<String>()
+    val youtubeKey: LiveData<String>
+        get() = _youtubeKey
 
     private val _seconds = MutableLiveData<Float>()
     val seconds: LiveData<Float>
@@ -40,32 +45,24 @@ class DetailViewModel(movie: Movie): ViewModel() {
 
     private fun playVideoTrailer(movie: Movie) {
 
-        val client = AsyncHttpClient()
-        client.get(String.format(VIDEOS_URL, movie.movieId),
-            object : JsonHttpResponseHandler() {
-                override fun onSuccess(statusCode: Int, headers: Headers?, json: JSON?) {
-                    Log.d(TAG, "onSuccess")
-                    val jsonObject: JSONObject = json!!.jsonObject
-                    val results: JSONArray = jsonObject.getJSONArray("results")
-                    if (results.length() == 0) {
-                        return
-                    }
+        YoutubeApi.retrofitService.getYoutubeKey(
+            movieId = movie.id,"a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object : Callback<YoutubeVideos>{
+            override fun onResponse(call: Call<YoutubeVideos>, response: Response<YoutubeVideos>) {
 
-                    _seconds.value = 0F
-                    _videoId.value = results.getJSONObject(0).getString("key")
 
-                    //initializeYoutube( videoId, 0F)
-                }
+                _seconds.value = 0F
 
-                override fun onFailure(
-                    statusCode: Int,
-                    headers: Headers?,
-                    response: String?,
-                    throwable: Throwable?
-                ) {
-                    Log.d(TAG, "onFailure")
-                }
-            })
+                val results = response.body()?.results
+                _youtubeKey.value = results?.get(0)?.key
+
+            }
+
+            override fun onFailure(call: Call<YoutubeVideos>, t: Throwable) {
+                Log.d(TAG, "failure")
+            }
+
+        })
+
     }
 
     fun trackSeconds(currentSecond: Float) {

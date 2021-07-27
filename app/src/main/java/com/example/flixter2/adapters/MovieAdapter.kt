@@ -18,7 +18,7 @@ import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
 import com.example.flixter2.fragments.movie.MovieFragmentDirections
-import com.example.flixter2.models.Movie
+import com.example.flixter2.network.Movie
 
 class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallBack()) {
 
@@ -80,7 +80,7 @@ class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallB
 class MovieDiffCallBack : DiffUtil.ItemCallback<Movie>() {
     //Two items represent the same movie (id)
     override fun areItemsTheSame(oldItem: Movie, newItem: Movie): Boolean {
-        return oldItem.movieId == newItem.movieId
+        return oldItem.id == newItem.id
     }
 
     //Two items that have the same content
