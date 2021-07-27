@@ -19,6 +19,6 @@
         >
         <argument
             android:name="Movie"
-            app:argType="com.example.flixter2.models.Movie"/>
+            app:argType="com.example.flixter2.network.Movie"/>
     </fragment>
 </navigation>

@@ -53,10 +53,12 @@ class DetailFragment : Fragment() {
         youTubePlayerView = binding.youtubePlayerView
         lifecycle.addObserver(youTubePlayerView)
 
-        viewModel.videoId.observe(viewLifecycleOwner, Observer { videoId->
+        viewModel.youtubeKey.observe(viewLifecycleOwner, Observer { youtubeKey->
 
-                viewModel.seconds.value?.let { seconds->
-                    initializeYoutube(videoId, seconds)
+            Log.i(TAG, "start the videdo$youtubeKey")
+
+            viewModel.seconds.value?.let { seconds->
+                    initializeYoutube(youtubeKey, seconds)
                 }
 
         })
@@ -66,11 +68,11 @@ class DetailFragment : Fragment() {
     }
 
 
-    private fun initializeYoutube(videoId: String,seconds: Float) {
+    private fun initializeYoutube(youtubeKey: String,seconds: Float) {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
 
-                youTubePlayer.loadOrCueVideo(lifecycle, videoId, seconds)
+                youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
                 tracker = YouTubePlayerTracker()
                 youTubePlayer.addListener(tracker);
 
