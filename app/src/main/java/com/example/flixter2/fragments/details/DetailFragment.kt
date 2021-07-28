@@ -12,8 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.example.flixter2.R
 import com.example.flixter2.databinding.FragmentDetailBinding
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
+import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.YouTubePlayerTracker
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -26,9 +28,10 @@ class DetailFragment : Fragment() {
 
     val TAG: String = "DetailFragment"
 
-    private lateinit var tracker: YouTubePlayerTracker
+    private var tracker: YouTubePlayerTracker = YouTubePlayerTracker()
 
     private lateinit var youTubePlayerView: YouTubePlayerView
+    private lateinit var listener: YouTubePlayerListener
 
 
     override fun onCreateView(
@@ -53,12 +56,15 @@ class DetailFragment : Fragment() {
         youTubePlayerView = binding.youtubePlayerView
         lifecycle.addObserver(youTubePlayerView)
 
-        viewModel.youtubeKey.observe(viewLifecycleOwner, Observer { youtubeKey->
 
-            Log.i(TAG, "start the videdo$youtubeKey")
+        viewModel.playVideo.observe(viewLifecycleOwner, Observer { playVideo ->
 
-            viewModel.seconds.value?.let { seconds->
-                    initializeYoutube(youtubeKey, seconds)
+                val youtubeKey = viewModel.youtubeKey.value
+                val seconds = viewModel.seconds.value
+                if (youtubeKey != null) {
+                    if (seconds != null) {
+                        initializeYoutube(youtubeKey, seconds, playVideo)
+                    }
                 }
 
         })
@@ -68,12 +74,18 @@ class DetailFragment : Fragment() {
     }
 
 
-    private fun initializeYoutube(youtubeKey: String,seconds: Float) {
+    private fun initializeYoutube(youtubeKey: String, seconds: Float, playVideo: Boolean) {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
 
-                youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
-                tracker = YouTubePlayerTracker()
+                //tracker = YouTubePlayerTracker()
+                if(playVideo) {
+                    youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
+                    viewModel.keepPlaying()
+                }else{
+                    youTubePlayer.cueVideo(youtubeKey,seconds)
+                }
+
                 youTubePlayer.addListener(tracker);
 
             }
@@ -81,6 +93,12 @@ class DetailFragment : Fragment() {
     }
 
     override fun onDestroy() {
+        Log.i(TAG, tracker.state.toString())
+
+        Log.i(TAG, tracker.videoDuration.toString())
+        if(tracker.state == PlayerConstants.PlayerState.ENDED){
+            viewModel.stopVideo()
+        }
         viewModel.trackSeconds(tracker.currentSecond)
         youTubePlayerView.release()
         super.onDestroy()

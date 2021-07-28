@@ -30,7 +30,9 @@ class DetailViewModel(movie: Movie): ViewModel() {
     val seconds: LiveData<Float>
         get() = _seconds
 
-
+    private var _playVideo = MutableLiveData<Boolean>()
+    val playVideo: LiveData<Boolean>
+        get() = _playVideo
 
 
     init {
@@ -54,6 +56,7 @@ class DetailViewModel(movie: Movie): ViewModel() {
 
                 val results = response.body()?.results
                 _youtubeKey.value = results?.get(0)?.key
+                _playVideo.value = true
 
             }
 
@@ -67,5 +70,13 @@ class DetailViewModel(movie: Movie): ViewModel() {
 
     fun trackSeconds(currentSecond: Float) {
         _seconds.value = currentSecond
+    }
+
+    fun stopVideo() {
+        _playVideo.value = false
+    }
+
+    fun keepPlaying() {
+        _playVideo.value = true
     }
 }
