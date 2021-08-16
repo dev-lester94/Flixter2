@@ -98,6 +98,8 @@ class DetailFragment : Fragment() {
         Log.i(TAG, tracker.videoDuration.toString())
         if(tracker.state == PlayerConstants.PlayerState.ENDED){
             viewModel.stopVideo()
+        }else if(tracker.state == PlayerConstants.PlayerState.PLAYING){
+            viewModel.keepPlaying()
         }
         viewModel.trackSeconds(tracker.currentSecond)
         youTubePlayerView.release()

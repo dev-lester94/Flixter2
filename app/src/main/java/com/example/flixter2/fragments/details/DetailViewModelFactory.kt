@@ -7,8 +7,7 @@ import com.example.flixter2.network.Movie
 class DetailViewModelFactory(private val movie: Movie) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DetailViewModel::class.java)) {
-            // TODO Construct and return the ScoreViewModel
-            return DetailViewModel(movie) as T
+                return DetailViewModel(movie) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

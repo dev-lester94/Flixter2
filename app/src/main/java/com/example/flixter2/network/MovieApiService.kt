@@ -8,6 +8,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 private const val BASE_URL = "https://api.themoviedb.org/3/movie/"
@@ -28,6 +29,10 @@ interface MovieApiService{
     @GET("now_playing")
     fun getLatestMovies(@Query("api_key") type: String):
             Call<LatestMovies>
+
+    @GET("{id}/videos")
+    fun getYoutubeKey(@Path("id") movieId: Int, @Query("api_key") type: String):
+            Call<YoutubeVideos>
 }
 
 object MovieApi{

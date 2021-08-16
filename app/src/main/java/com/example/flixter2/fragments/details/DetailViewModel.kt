@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import com.codepath.asynchttpclient.AsyncHttpClient
 import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
 import com.example.flixter2.network.Movie
+import com.example.flixter2.network.MovieApi
 import com.example.flixter2.network.YoutubeApi
 import com.example.flixter2.network.YoutubeVideos
 import okhttp3.Headers
@@ -47,7 +48,7 @@ class DetailViewModel(movie: Movie): ViewModel() {
 
     private fun playVideoTrailer(movie: Movie) {
 
-        YoutubeApi.retrofitService.getYoutubeKey(
+        MovieApi.retrofitService.getYoutubeKey(
             movieId = movie.id,"a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object : Callback<YoutubeVideos>{
             override fun onResponse(call: Call<YoutubeVideos>, response: Response<YoutubeVideos>) {
 
