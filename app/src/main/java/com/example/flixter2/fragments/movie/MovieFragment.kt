@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -55,18 +56,24 @@ class MovieFragment : Fragment() {
         viewModel.movies.observe(viewLifecycleOwner, Observer {
             when (it.status) {
                 Resource.STATUS.SUCCESS -> {
+                    Log.i(TAG,"Success: " + it.message)
                     binding.statusImage.visibility = View.GONE
                     val adapter = binding.rvMovies.adapter as MovieAdapter
                     val results = (it.data as LatestMovies).results
                     adapter.submitList(results)
                 }
                 Resource.STATUS.LOADING -> {
+                    Log.i(TAG, "Loading: " + it.message)
+
                     binding.statusImage.visibility = View.VISIBLE
                     binding.statusImage.setImageResource(R.drawable.loading_animation)
                 }
                 Resource.STATUS.ERROR -> {
+                    Log.i(TAG,"Error: " + it.message)
+
                     binding.statusImage.visibility = View.VISIBLE
                     binding.statusImage.setImageResource(R.drawable.ic_connection_error)
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
             }
         })

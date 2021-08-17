@@ -15,7 +15,7 @@ class DetailViewModel(private val movie: Movie, private val repository: MovieApi
     private val TAG = "DetailViewModel"
 
     private var _youtubeKey = repository.getYoutubeKey(movieId = movie.id)
-    val youtubeKey: LiveData<Resource<out Any>>
+    val youtubeKey: LiveData<out Resource<out YoutubeVideos>>
         get() = _youtubeKey
 
     private val _seconds = MutableLiveData<Float>()

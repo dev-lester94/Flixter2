@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -66,25 +67,16 @@ class DetailFragment : Fragment() {
                     val key = (it.data as YoutubeVideos).results[0].key
                     //viewModel.keepPlaying()
                     initializeYoutube(key)
-
-
-                    //val playVideo = viewModel.playVideo.value
-                    //Log.i(TAG, "playVideo: " + playVideo.toString())
-                    //val seconds = viewModel.seconds.value
-
-
-
                     }
-
-
-
                 Resource.STATUS.LOADING -> {
                     //viewModel.stopVideo()
 
                 }
                 Resource.STATUS.ERROR -> {
                     //viewModel.stopVideo()
-                    Log.i(TAG, "error!!!!!!!")
+                    Log.i(TAG, it.message.toString())
+                    youTubePlayerView.release()
+                    Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
             }
         })

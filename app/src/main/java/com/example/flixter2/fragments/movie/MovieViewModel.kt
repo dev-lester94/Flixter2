@@ -27,7 +27,7 @@ class MovieViewModel(private val repository: MovieApiRepository): ViewModel() {
 
     private val _movies = repository.getLatestMovies()
 
-    val movies: LiveData<Resource<out Any>>
+    val movies: LiveData<out Resource<out LatestMovies>>
         get() = _movies
 
 
