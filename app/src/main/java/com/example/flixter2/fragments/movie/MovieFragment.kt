@@ -1,16 +1,22 @@
 package com.example.flixter2.fragments.movie
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.example.flixter2.R
 import com.example.flixter2.adapters.MovieAdapter
 import com.example.flixter2.databinding.FragmentMovieBinding
+import com.example.flixter2.network.LatestMovies
+import com.example.flixter2.network.Movie
+import com.example.flixter2.network.MovieApiRepository
+import com.example.flixter2.utils.Resource
 
 /**
  * A simple [Fragment] subclass.
@@ -20,6 +26,7 @@ import com.example.flixter2.databinding.FragmentMovieBinding
 class MovieFragment : Fragment() {
 
     private lateinit var viewModel: MovieViewModel;
+    val TAG = "MovieFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,12 +41,38 @@ class MovieFragment : Fragment() {
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
+
+
         // Giving the binding access to the OverviewViewModel
-        viewModel = ViewModelProviders.of(this).get(MovieViewModel::class.java)
-        binding.viewModel = viewModel
+        val repository = MovieApiRepository()
+        viewModel = ViewModelProvider(this, MovieViewModelFactory(repository))
+            .get(MovieViewModel::class.java)
 
-
+        //Set up adapter
         binding.rvMovies.adapter = MovieAdapter()
+
+        //Set up observers
+        viewModel.movies.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.STATUS.SUCCESS -> {
+                    binding.statusImage.visibility = View.GONE
+                    val adapter = binding.rvMovies.adapter as MovieAdapter
+                    val results = (it.data as LatestMovies).results
+                    adapter.submitList(results)
+                }
+                Resource.STATUS.LOADING -> {
+                    binding.statusImage.visibility = View.VISIBLE
+                    binding.statusImage.setImageResource(R.drawable.loading_animation)
+                }
+                Resource.STATUS.ERROR -> {
+                    binding.statusImage.visibility = View.VISIBLE
+                    binding.statusImage.setImageResource(R.drawable.ic_connection_error)
+                }
+            }
+        })
+
+
+
 
 
 

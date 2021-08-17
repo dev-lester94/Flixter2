@@ -1,7 +1,7 @@
 package com.example.flixter2.network
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 data class LatestMovies (
     val dates: Date,

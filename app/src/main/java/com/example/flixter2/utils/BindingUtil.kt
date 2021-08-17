@@ -9,10 +9,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.adapters.MovieAdapter
-import com.example.flixter2.fragments.movie.MovieApiStatus
+
 import com.example.flixter2.network.Movie
 
-
+/*
 @BindingAdapter("listData")
 fun bindRecyclerView(recyclerView: RecyclerView, data: List<Movie>?) {
     val adapter = recyclerView.adapter as MovieAdapter
@@ -20,6 +20,8 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Movie>?) {
     //val adapter = recyclerView.adapter as MovieAdapter
     adapter.submitList(data)
 }
+
+*/
 
 @BindingAdapter("imageUrl")
 fun setImage(imgView: ImageView, movie: Movie){
@@ -35,6 +37,7 @@ fun setImage(imgView: ImageView, movie: Movie){
     Glide.with(imgView.context).load(image).into(imgView)
 }
 
+/*
 @BindingAdapter("movieApiStatus")
 fun bindStatus(statusImageView: ImageView, status: MovieApiStatus?) {
     when (status) {
@@ -54,3 +57,4 @@ fun bindStatus(statusImageView: ImageView, status: MovieApiStatus?) {
         }
     }
 }
+ */

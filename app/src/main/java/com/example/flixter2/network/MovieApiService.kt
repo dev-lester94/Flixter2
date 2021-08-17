@@ -19,7 +19,6 @@ private val moshi = Moshi.Builder()
 
 private val retrofit = Retrofit.Builder()
     .addConverterFactory(MoshiConverterFactory.create(moshi))
-    .addCallAdapterFactory(CoroutineCallAdapterFactory())
     .baseUrl(BASE_URL)
     .build()
 
@@ -27,12 +26,12 @@ private val retrofit = Retrofit.Builder()
 
 interface MovieApiService{
     @GET("now_playing")
-    fun getLatestMovies(@Query("api_key") type: String):
-            Call<LatestMovies>
+    suspend fun getLatestMovies(@Query("api_key") type: String): LatestMovies
+
 
     @GET("{id}/videos")
-    fun getYoutubeKey(@Path("id") movieId: Int, @Query("api_key") type: String):
-            Call<YoutubeVideos>
+    suspend fun getYoutubeKey(@Path("id") movieId:
+                                  Int, @Query("api_key") type: String): YoutubeVideos
 }
 
 object MovieApi{

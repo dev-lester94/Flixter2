@@ -9,9 +9,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.lifecycle.ViewModelProvider
 import com.example.flixter2.R
 import com.example.flixter2.databinding.FragmentDetailBinding
+import com.example.flixter2.network.MovieApiRepository
+import com.example.flixter2.network.YoutubeVideos
+import com.example.flixter2.utils.Resource
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.PlayerConstants
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
@@ -42,31 +45,48 @@ class DetailFragment : Fragment() {
         val binding: FragmentDetailBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
 
+        (activity as AppCompatActivity).supportActionBar?.title = "Details"
+
+
         var args = DetailFragmentArgs.fromBundle(requireArguments())
 
-        viewModelFactory = DetailViewModelFactory(args.movie)
-        viewModel = ViewModelProviders.of(this,viewModelFactory).get(DetailViewModel::class.java)
+        viewModelFactory = DetailViewModelFactory(args.movie, MovieApiRepository())
+        viewModel = ViewModelProvider(this,viewModelFactory).get(DetailViewModel::class.java)
 
         binding.movie = args.movie
 
         Log.i(TAG, args.movie.title)
 
-        (activity as AppCompatActivity).supportActionBar?.title = "Details"
-
         youTubePlayerView = binding.youtubePlayerView
         lifecycle.addObserver(youTubePlayerView)
 
+        viewModel.youtubeKey.observe(viewLifecycleOwner, Observer {
+            when (it.status) {
+                Resource.STATUS.SUCCESS -> {
+                    val key = (it.data as YoutubeVideos).results[0].key
+                    //viewModel.keepPlaying()
+                    initializeYoutube(key)
 
-        viewModel.playVideo.observe(viewLifecycleOwner, Observer { playVideo ->
 
-                val youtubeKey = viewModel.youtubeKey.value
-                val seconds = viewModel.seconds.value
-                if (youtubeKey != null) {
-                    if (seconds != null) {
-                        initializeYoutube(youtubeKey, seconds, playVideo)
+                    //val playVideo = viewModel.playVideo.value
+                    //Log.i(TAG, "playVideo: " + playVideo.toString())
+                    //val seconds = viewModel.seconds.value
+
+
+
                     }
-                }
 
+
+
+                Resource.STATUS.LOADING -> {
+                    //viewModel.stopVideo()
+
+                }
+                Resource.STATUS.ERROR -> {
+                    //viewModel.stopVideo()
+                    Log.i(TAG, "error!!!!!!!")
+                }
+            }
         })
 
 
@@ -74,16 +94,24 @@ class DetailFragment : Fragment() {
     }
 
 
-    private fun initializeYoutube(youtubeKey: String, seconds: Float, playVideo: Boolean) {
+    private fun initializeYoutube(youtubeKey: String) {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
 
                 //tracker = YouTubePlayerTracker()
-                if(playVideo) {
-                    youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
-                    viewModel.keepPlaying()
+                val playVideo = viewModel.playVideo.value
+                Log.i(TAG, "playVideo: " + playVideo.toString())
+                val seconds = viewModel.seconds.value
+                if(playVideo == true) {
+                    if (seconds != null) {
+                        youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
+                    }
+                    //viewModel.keepPlaying()
                 }else{
-                    youTubePlayer.cueVideo(youtubeKey,seconds)
+                    if (seconds != null) {
+                        youTubePlayer.cueVideo(youtubeKey,seconds)
+                    }
+                    //viewModel.stopVideo()
                 }
 
                 youTubePlayer.addListener(tracker);
@@ -96,7 +124,8 @@ class DetailFragment : Fragment() {
         Log.i(TAG, tracker.state.toString())
 
         Log.i(TAG, tracker.videoDuration.toString())
-        if(tracker.state == PlayerConstants.PlayerState.ENDED){
+        if(tracker.state == PlayerConstants.PlayerState.ENDED ||
+            tracker.state == PlayerConstants.PlayerState.VIDEO_CUED){
             viewModel.stopVideo()
         }else if(tracker.state == PlayerConstants.PlayerState.PLAYING){
             viewModel.keepPlaying()

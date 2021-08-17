@@ -5,11 +5,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
-    <data>
-        <variable
-            name="viewModel"
-            type="com.example.flixter2.fragments.movie.MovieViewModel" />
-    </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -20,7 +15,6 @@
             android:id="@+id/rvMovies"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:listData="@{viewModel.movies}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -35,7 +29,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:movieApiStatus="@{viewModel.status}" />
+            />
 
 
 
