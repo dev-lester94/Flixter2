@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.flixter2.R
 import com.example.flixter2.adapters.MovieAdapter
+import com.example.flixter2.adapters.MovieClickListener
 import com.example.flixter2.databinding.FragmentMovieBinding
 import com.example.flixter2.network.LatestMovies
 import com.example.flixter2.network.Movie
@@ -50,7 +52,9 @@ class MovieFragment : Fragment() {
             .get(MovieViewModel::class.java)
 
         //Set up adapter
-        binding.rvMovies.adapter = MovieAdapter()
+        binding.rvMovies.adapter = MovieAdapter(MovieClickListener { movie ->
+            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
+        })
 
         //Set up observers
         viewModel.movies.observe(viewLifecycleOwner, Observer {

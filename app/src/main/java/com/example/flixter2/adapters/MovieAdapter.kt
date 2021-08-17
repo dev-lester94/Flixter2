@@ -1,26 +1,18 @@
 package com.example.flixter2.adapters
 
-import android.content.Context
-import android.content.res.Configuration
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
 import com.example.flixter2.fragments.movie.MovieFragmentDirections
 import com.example.flixter2.network.Movie
 
-class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallBack()) {
+class MovieAdapter(private val clickListener: MovieClickListener): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallBack()) {
 
     //lateinit var binding: ItemMovieBinding
 
@@ -34,7 +26,7 @@ class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallB
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val movie: Movie = getItem(position)
-        holder.bind(movie)
+        holder.bind(movie, clickListener)
     }
 
 
@@ -51,30 +43,20 @@ class MovieAdapter(): ListAdapter<Movie, MovieAdapter.ViewHolder>(MovieDiffCallB
             }
         }
 
-        fun bind(movie: Movie) {
-
-
+        fun bind(movie: Movie, clickListener: MovieClickListener) {
             //invalidateAll()
             binding.movie =movie
+            binding.clickListener = clickListener
             //tvTitle.text = movie.title
-
             binding.executePendingBindings()
-
-
-
-            binding.container.setOnClickListener {
-                //Toast.makeText(context,"clicked row", Toast.LENGTH_SHORT).show()
-
-                //val movieString: String = movie.toString()
-                //Log.i("TAG", movieString)
-                it.findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
-            }
-
-
 
         }
 
     }
+}
+
+class MovieClickListener(val clickListener: (movie: Movie) -> Unit){
+    fun onClick(item: Movie) = clickListener(item)
 }
 
 class MovieDiffCallBack : DiffUtil.ItemCallback<Movie>() {

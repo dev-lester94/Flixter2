@@ -7,6 +7,9 @@
 
     <data>
         <variable
+            name="clickListener"
+            type="com.example.flixter2.adapters.MovieClickListener" />
+        <variable
             name="movie"
             type="com.example.flixter2.network.Movie" />
     </data>
@@ -15,7 +18,8 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(movie)}">
 
 
 
