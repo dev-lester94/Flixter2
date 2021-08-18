@@ -13,8 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.flixter2.R
-import com.example.flixter2.adapters.MovieAdapter
-import com.example.flixter2.adapters.MovieClickListener
+import com.example.flixter2.adapters.*
 import com.example.flixter2.databinding.FragmentMovieBinding
 import com.example.flixter2.network.LatestMovies
 import com.example.flixter2.network.Movie
@@ -52,9 +51,20 @@ class MovieFragment : Fragment() {
             .get(MovieViewModel::class.java)
 
         //Set up adapter
-        binding.rvMovies.adapter = MovieAdapter(MovieClickListener { movie ->
+
+        /*val clickListener = MovieClickListener { movie ->
             findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
-        })
+        }*/
+
+        val clickListener = BaseViewHolder.ItemSelectedListener{
+            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(it as Movie))
+        }
+
+        binding.rvMovies.adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack2())
+
+        /* binding.rvMovies.adapter = MovieAdapter(MovieClickListener { movie ->
+            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
+        })*/
 
         //Set up observers
         viewModel.movies.observe(viewLifecycleOwner, Observer {
@@ -62,9 +72,9 @@ class MovieFragment : Fragment() {
                 Resource.STATUS.SUCCESS -> {
                     Log.i(TAG,"Success: " + it.message)
                     binding.statusImage.visibility = View.GONE
-                    val adapter = binding.rvMovies.adapter as MovieAdapter
+                    val adapter = binding.rvMovies.adapter as MoviesItemAdapter<Movie>
                     val results = (it.data as LatestMovies).results
-                    adapter.submitList(results)
+                    adapter.submitData(data)
                 }
                 Resource.STATUS.LOADING -> {
                     Log.i(TAG, "Loading: " + it.message)
