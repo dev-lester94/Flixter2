@@ -8,7 +8,7 @@ import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.flixter2.R
-import com.example.flixter2.adapters.MovieAdapter
+
 
 import com.example.flixter2.network.Movie
 
