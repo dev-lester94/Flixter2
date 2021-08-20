@@ -116,4 +116,6 @@ dependencies {
     def paging_version = "3.0.1"
     implementation("androidx.paging:paging-runtime:$paging_version")
 
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
 }

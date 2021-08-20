@@ -1,6 +1,8 @@
 package com.example.flixter2.adapters
 
+import android.content.ContentValues.TAG
 import android.content.res.Configuration
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
@@ -28,10 +30,19 @@ class MovieViewHolder(private val binding : ItemMovieBinding) : BaseViewHolder<M
         lateinit var image: String
         val imgView = binding.ivPoster
         val orientation = imgView.context.resources.configuration.orientation
+
         if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-                image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.poster_path)
+            Log.i(TAG, "Portrit!!!! movie.title: ${movie.title}, " +
+                    "movie.poster_path: ${movie.poster_path}," +
+                    " movie.backdrop: ${movie.backdrop_path}")
+            val poster_path = movie.poster_path
+            image = String.format("https://image.tmdb.org/t/p/w500/%s", poster_path)
             // ...
         } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            Log.i(TAG, "Landscape!!!! movie.title: ${movie.title}, " +
+                    "movie.poster_path: ${movie.poster_path}," +
+                    " movie.backdrop: ${movie.backdrop_path}")
+            //image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.poster_path)
             image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.backdrop_path)
             // ...
         }

@@ -14,7 +14,8 @@ class MovieApiRepository {
     val TAG = "MovieApiRepository"
     fun getLatestMovies() = Pager(
         config = PagingConfig(
-            pageSize = 10
+            pageSize = 10,
+            maxSize = 100
         ),pagingSourceFactory = {MoviePagingSource()}
     ).liveData
 
