@@ -7,6 +7,9 @@
 
     <data>
         <variable
+            name="clickListener"
+            type="com.example.flixter2.adapters.BaseViewHolder.ItemSelectedListener" />
+        <variable
             name="movie"
             type="com.example.flixter2.network.Movie" />
     </data>

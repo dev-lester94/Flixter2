@@ -4,26 +4,18 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.codepath.asynchttpclient.AsyncHttpClient
-import com.codepath.asynchttpclient.callback.JsonHttpResponseHandler
-import com.example.flixter2.network.Movie
-import com.example.flixter2.network.YoutubeApi
-import com.example.flixter2.network.YoutubeVideos
-import okhttp3.Headers
-import org.json.JSONArray
-import org.json.JSONObject
+import com.example.flixter2.network.*
+import com.example.flixter2.utils.Resource
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class DetailViewModel(movie: Movie): ViewModel() {
+class DetailViewModel(private val movie: Movie, private val repository: MovieApiRepository): ViewModel() {
 
-    private val VIDEOS_URL =
-        "https://api.themoviedb.org/3/movie/%d/videos?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
-    val TAG = "DetailViewModel"
+    private val TAG = "DetailViewModel"
 
-    private var _youtubeKey = MutableLiveData<String>()
-    val youtubeKey: LiveData<String>
+    private var _youtubeKey = repository.getYoutubeKey(movieId = movie.id)
+    val youtubeKey: LiveData<out Resource<out YoutubeVideos>>
         get() = _youtubeKey
 
     private val _seconds = MutableLiveData<Float>()
@@ -36,47 +28,26 @@ class DetailViewModel(movie: Movie): ViewModel() {
 
 
     init {
-        Log.i(TAG, movie.title)
-        playVideoTrailer(movie)
+        _seconds.value = 0F
+        _playVideo.value = true
+        Log.i(TAG, "playVideo: " + playVideo.value.toString())
     }
 
-    override fun onCleared() {
 
-        super.onCleared()
-    }
-
-    private fun playVideoTrailer(movie: Movie) {
-
-        YoutubeApi.retrofitService.getYoutubeKey(
-            movieId = movie.id,"a07e22bc18f5cb106bfe4cc1f83ad8ed").enqueue(object : Callback<YoutubeVideos>{
-            override fun onResponse(call: Call<YoutubeVideos>, response: Response<YoutubeVideos>) {
-
-
-                _seconds.value = 0F
-
-                val results = response.body()?.results
-                _youtubeKey.value = results?.get(0)?.key
-                _playVideo.value = true
-
-            }
-
-            override fun onFailure(call: Call<YoutubeVideos>, t: Throwable) {
-                Log.d(TAG, "failure")
-            }
-
-        })
-
-    }
 
     fun trackSeconds(currentSecond: Float) {
         _seconds.value = currentSecond
     }
 
     fun stopVideo() {
+        Log.i(TAG, "stopvideo")
         _playVideo.value = false
     }
 
     fun keepPlaying() {
+        Log.i(TAG, "keepplayign")
         _playVideo.value = true
     }
+
+
 }
