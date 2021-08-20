@@ -1,9 +1,10 @@
 package com.example.flixter2.adapters
 
+import android.content.res.Configuration
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.flixter2.R
 import com.example.flixter2.databinding.ItemMovieBinding
 import com.example.flixter2.network.Movie
@@ -21,9 +22,20 @@ class MovieViewHolder(private val binding : ItemMovieBinding) : BaseViewHolder<M
         }
     }
 
-    override fun bind(it: Movie, clickListener: ItemSelectedListener?) {
-        binding.movie = it
+    override fun bind(movie: Movie, clickListener: ItemSelectedListener?) {
+        binding.movie = movie
         binding.clickListener = clickListener
+        lateinit var image: String
+        val imgView = binding.ivPoster
+        val orientation = imgView.context.resources.configuration.orientation
+        if(orientation == Configuration.ORIENTATION_PORTRAIT) {
+                image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.poster_path)
+            // ...
+        } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.backdrop_path)
+            // ...
+        }
+        Glide.with(imgView.context).load(image).into(imgView)
         //tvTitle.text = movie.title
         binding.executePendingBindings()
     }

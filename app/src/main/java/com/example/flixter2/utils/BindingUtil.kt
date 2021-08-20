@@ -1,15 +1,10 @@
 package com.example.flixter2.fragments
 
+
 import android.content.res.Configuration
-import android.util.Log
-import android.view.View
 import android.widget.ImageView
 import androidx.databinding.BindingAdapter
-import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.flixter2.R
-
-
 import com.example.flixter2.network.Movie
 
 /*
@@ -23,19 +18,20 @@ fun bindRecyclerView(recyclerView: RecyclerView, data: List<Movie>?) {
 
 */
 
-@BindingAdapter("imageUrl")
+/*@BindingAdapter("imageUrl")
 fun setImage(imgView: ImageView, movie: Movie){
     lateinit var image: String
     val orientation = imgView.context.resources.configuration.orientation
     if(orientation == Configuration.ORIENTATION_PORTRAIT) {
-        image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.poster_path)
+        if(movie.poster_path != null)
+            image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.poster_path)
         // ...
     } else if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
         image = String.format("https://image.tmdb.org/t/p/w342/%s", movie.backdrop_path)
         // ...
     }
     Glide.with(imgView.context).load(image).into(imgView)
-}
+}*/
 
 /*
 @BindingAdapter("movieApiStatus")
