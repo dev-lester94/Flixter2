@@ -11,7 +11,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
 import com.example.flixter2.R
 import com.example.flixter2.adapters.*
 import com.example.flixter2.databinding.FragmentMovieBinding
@@ -19,6 +21,7 @@ import com.example.flixter2.network.LatestMovies
 import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApiRepository
 import com.example.flixter2.utils.Resource
+import kotlinx.coroutines.launch
 
 /**
  * A simple [Fragment] subclass.
@@ -60,7 +63,7 @@ class MovieFragment : Fragment() {
             findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(it as Movie))
         }
 
-        binding.rvMovies.adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack2())
+        binding.rvMovies.adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack())
 
         /* binding.rvMovies.adapter = MovieAdapter(MovieClickListener { movie ->
             findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
@@ -69,12 +72,12 @@ class MovieFragment : Fragment() {
         //Set up observers
         viewModel.movies.observe(viewLifecycleOwner, Observer {
             when (it.status) {
-                Resource.STATUS.SUCCESS -> {
+                Resource.STATUS.SUCCESS -> lifecycleScope.launch{
                     Log.i(TAG,"Success: " + it.message)
                     binding.statusImage.visibility = View.GONE
                     val adapter = binding.rvMovies.adapter as MoviesItemAdapter<Movie>
                     val results = (it.data as LatestMovies).results
-                    adapter.submitData(data)
+                    adapter.submitData(PagingData.from(results))
                 }
                 Resource.STATUS.LOADING -> {
                     Log.i(TAG, "Loading: " + it.message)
