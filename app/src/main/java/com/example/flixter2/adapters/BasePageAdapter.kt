@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BasePageAdapter<T: Any>(
-        private val clickListener: BaseViewHolder.ItemSelectedListener?= null,
+        private val clickListener: BaseViewHolder.ItemSelectedListener,
         comparator: DiffUtil.ItemCallback<T>
 ): PagingDataAdapter<T, BaseViewHolder<T>>(comparator){
 

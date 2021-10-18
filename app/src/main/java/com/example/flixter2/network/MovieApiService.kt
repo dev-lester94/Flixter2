@@ -6,6 +6,7 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import kotlinx.coroutines.Deferred
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +19,7 @@ private val moshi = Moshi.Builder()
     .build()
 
 private val retrofit = Retrofit.Builder()
-    .addConverterFactory(MoshiConverterFactory.create(moshi))
+    .addConverterFactory(GsonConverterFactory.create())
     .baseUrl(BASE_URL)
     .build()
 
@@ -26,12 +27,13 @@ private val retrofit = Retrofit.Builder()
 
 interface MovieApiService{
     @GET("now_playing")
-    suspend fun getLatestMovies(@Query("api_key") type: String): LatestMovies
+    suspend fun getLatestMovies(@Query("api_key") api_key: String,
+                                @Query("page") page: Int): LatestMovies
 
 
     @GET("{id}/videos")
     suspend fun getYoutubeKey(@Path("id") movieId:
-                                  Int, @Query("api_key") type: String): YoutubeVideos
+                                  Int, @Query("api_key") api_key: String): YoutubeVideos
 }
 
 object MovieApi{

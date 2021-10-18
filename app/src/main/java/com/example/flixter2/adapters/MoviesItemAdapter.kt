@@ -17,7 +17,6 @@ class MoviesItemAdapter<T: Any>(
 
     companion object{
         const val MOVIE_TYPE = 0
-        const val IGNORE_TYPE = 1 // IGNORE
     }
 
     @Suppress("UNCHECKED_CAST")
