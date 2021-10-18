@@ -29,6 +29,7 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:imageUrl="@{movie}"
             tools:srcCompat="@tools:sample/avatars" />
 
         <TextView

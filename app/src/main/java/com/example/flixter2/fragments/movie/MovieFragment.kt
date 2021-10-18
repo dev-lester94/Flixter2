@@ -60,7 +60,13 @@ class MovieFragment : Fragment() {
         }*/
 
         val clickListener = BaseViewHolder.ItemSelectedListener{
-            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(it as Movie))
+            if(it is Movie) {
+                findNavController().navigate(
+                    MovieFragmentDirections.actionMovieFragmentToDetailFragment(
+                        it as Movie
+                    )
+                )
+            }
         }
 
         binding.rvMovies.adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack())

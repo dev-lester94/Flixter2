@@ -2,11 +2,24 @@ package com.example.flixter2.adapters
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
+import com.example.flixter2.generated.callback.OnClickListener
 
-abstract class BaseViewHolder<T>(private val binding: ViewDataBinding): RecyclerView.ViewHolder(binding.root) {
+open class BaseViewHolder<T>(
+        private val itemId: Int,
+        private val clickListenerId: Int,
+        private val binding: ViewDataBinding
+        ): RecyclerView.ViewHolder(binding.root) {
+
     class ItemSelectedListener(val clickListener: (item: Any) -> Unit) {
         fun onClick(item: Any) = clickListener(item)
     }
 
-    abstract fun bind(it: T, clickListener: ItemSelectedListener?)
+    open fun bind(
+            item: T,
+            clickListener: ItemSelectedListener
+    ){
+        binding.setVariable(itemId, item)
+        binding.setVariable(clickListenerId, clickListener)
+        binding.executePendingBindings()
+    }
 }
