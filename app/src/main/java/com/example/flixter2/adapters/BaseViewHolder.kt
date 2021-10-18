@@ -2,7 +2,6 @@ package com.example.flixter2.adapters
 
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.RecyclerView
-import com.example.flixter2.generated.callback.OnClickListener
 
 open class BaseViewHolder<T>(
         private val itemId: Int,

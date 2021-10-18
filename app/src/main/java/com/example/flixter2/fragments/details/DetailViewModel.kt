@@ -6,9 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.flixter2.network.*
 import com.example.flixter2.utils.Resource
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class DetailViewModel(private val movie: Movie, private val repository: MovieApiRepository): ViewModel() {
 

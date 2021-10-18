@@ -33,17 +33,7 @@ class MovieViewModel(private val repository: MovieApiRepository): ViewModel() {
 
     init {
         Log.i(TAG, "Initialize")
-        //_movies.value = arrayListOf()
-        //getLatestMovies()
-        //getLatestMovies()
     }
-
-   /* private fun getLatestMovies() {
-
-        _movies= repository.getLatestMovies()
-
-
-    }*/
 
 
     override fun onCleared() {
