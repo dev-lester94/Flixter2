@@ -39,7 +39,7 @@
             android:layout_marginStart="5dp"
             android:textSize="24sp"
             android:text="@{movie.title}"
-            android:textColor="@color/black"
+            android:textAppearance="@style/TextAppearance.Flixter.Bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toEndOf="@+id/ivPoster"

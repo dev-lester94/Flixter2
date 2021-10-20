@@ -40,6 +40,7 @@
                     android:layout_marginEnd="4dp"
                     android:text="@{movie.title}"
                     android:textSize="30sp"
+                    android:textAppearance="@style/TextAppearance.Flixter.Bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/youtube_player_view"

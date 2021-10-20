@@ -6,15 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.example.flixter2.network.LatestMovies
 import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApiRepository
-import com.example.flixter2.utils.Resource
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-
 
 
 class MovieViewModel(private val repository: MovieApiRepository): ViewModel() {
@@ -28,22 +21,9 @@ class MovieViewModel(private val repository: MovieApiRepository): ViewModel() {
     val movies: LiveData<PagingData<Movie>>
         get() = _movies
 
-
-
-
     init {
         Log.i(TAG, "Initialize")
-        //_movies.value = arrayListOf()
-        //getLatestMovies()
-        //getLatestMovies()
     }
-
-   /* private fun getLatestMovies() {
-
-        _movies= repository.getLatestMovies()
-
-
-    }*/
 
 
     override fun onCleared() {
