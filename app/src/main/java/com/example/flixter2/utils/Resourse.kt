@@ -19,14 +19,14 @@ data class Resource<T>(val status: STATUS, val data: T? , val message: String?= 
 
 fun <T> get(remote: suspend() -> T?) = liveData(Dispatchers.IO){
 
-    Log.i(TAG, "loading")
+    //Log.i(TAG, "loading")
     emit(Resource.loading())
     try{
         remote.invoke()?.let {
-            Log.i(TAG, "success")
+            //Log.i(TAG, "success")
             emit(Resource.success(it))
         }?: run{
-            Log.i(TAG, "error")
+            //Log.i(TAG, "error")
             emit(Resource.error("Network error"))
         }
     }catch(e: Exception){

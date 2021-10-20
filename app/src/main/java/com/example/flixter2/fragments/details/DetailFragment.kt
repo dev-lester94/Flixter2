@@ -45,9 +45,6 @@ class DetailFragment : Fragment() {
         val binding: FragmentDetailBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
 
-        //(activity as AppCompatActivity).supportActionBar?.title = "Details"
-
-
         var args = DetailFragmentArgs.fromBundle(requireArguments())
 
         viewModelFactory = DetailViewModelFactory(args.movie, MovieApiRepository())
@@ -64,16 +61,15 @@ class DetailFragment : Fragment() {
             when (it.status) {
                 Resource.STATUS.SUCCESS -> {
                     val key = (it.data as YoutubeVideos).results[0].key
-                    //viewModel.keepPlaying()
                     initializeYoutube(key)
-                    }
-                Resource.STATUS.LOADING -> {
-                    //viewModel.stopVideo()
+                }
+
+                Resource.STATUS.LOADING ->{
 
                 }
+
                 Resource.STATUS.ERROR -> {
-                    //viewModel.stopVideo()
-                    Log.i(TAG, it.message.toString())
+                    //Log.i(TAG, it.message.toString())
                     youTubePlayerView.release()
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
@@ -91,18 +87,16 @@ class DetailFragment : Fragment() {
 
                 //tracker = YouTubePlayerTracker()
                 val playVideo = viewModel.playVideo.value
-                Log.i(TAG, "playVideo: " + playVideo.toString())
+                //Log.i(TAG, "playVideo: " + playVideo.toString())
                 val seconds = viewModel.seconds.value
                 if(playVideo == true) {
                     if (seconds != null) {
                         youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
                     }
-                    //viewModel.keepPlaying()
                 }else{
                     if (seconds != null) {
                         youTubePlayer.cueVideo(youtubeKey,seconds)
                     }
-                    //viewModel.stopVideo()
                 }
 
                 youTubePlayer.addListener(tracker);
@@ -112,9 +106,8 @@ class DetailFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        Log.i(TAG, tracker.state.toString())
-
-        Log.i(TAG, tracker.videoDuration.toString())
+        //Log.i(TAG, tracker.state.toString())
+        //Log.i(TAG, tracker.videoDuration.toString())
         if(tracker.state == PlayerConstants.PlayerState.ENDED ||
             tracker.state == PlayerConstants.PlayerState.VIDEO_CUED){
             viewModel.stopVideo()

@@ -5,15 +5,21 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
 import com.example.flixter2.R
 import com.example.flixter2.adapters.*
 import com.example.flixter2.databinding.FragmentMovieBinding
 import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApiRepository
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+
 /**
  * A simple [Fragment] subclass.
  * Use the [MovieFragment.newInstance] factory method to
@@ -29,7 +35,6 @@ class MovieFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        //(activity as AppCompatActivity).supportActionBar?.title = "Latest Movies"
 
         val binding: FragmentMovieBinding =
             DataBindingUtil.inflate(inflater, R.layout.fragment_movie, container, false)
@@ -37,49 +42,51 @@ class MovieFragment : Fragment() {
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
 
-
-
-        // Giving the binding access to the OverviewViewModel
         val repository = MovieApiRepository()
         viewModel = ViewModelProvider(this, MovieViewModelFactory(repository))
             .get(MovieViewModel::class.java)
 
-        //Set up adapter
-
-        /*val clickListener = MovieClickListener { movie ->
-            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
-        }*/
 
         val clickListener = BaseViewHolder.ItemSelectedListener{
             if(it is Movie) {
                 findNavController().navigate(
-                    MovieFragmentDirections.actionMovieFragmentToDetailFragment(
-                        it as Movie
-                    )
-                )
+                        MovieFragmentDirections.actionMovieFragmentToDetailFragment(it))
             }
         }
 
-        binding.rvMovies.adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack())
+        val adapter = MoviesItemAdapter(clickListener,MovieDiffCallBack())
 
-        /* binding.rvMovies.adapter = MovieAdapter(MovieClickListener { movie ->
-            findNavController().navigate(MovieFragmentDirections.actionMovieFragmentToDetailFragment(movie))
-        })*/
+        binding.apply {
+            rvMovies.adapter = adapter.withLoadStateFooter(
+                    footer = MovieLoadStateAdapter{
+                        adapter.retry()
+                    }
+            )
+
+            retryButton.setOnClickListener { adapter.retry() }
+        }
+
 
         //Set up observers
         viewModel.movies.observe(viewLifecycleOwner, Observer {
-            (binding.rvMovies.adapter as MoviesItemAdapter<Movie>).submitData(
+            adapter.submitData(
                     viewLifecycleOwner.lifecycle, it)
         })
 
 
 
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates->
+                binding.apply {
+                    progressBar.isVisible = loadStates.refresh is LoadState.Loading
+                    statusImage.isVisible = loadStates.refresh is LoadState.Error
+                    textView.isVisible = loadStates.refresh is LoadState.Error
+                    retryButton.isVisible = loadStates.refresh is LoadState.Error
+                }
 
-
+            }
+        }
 
         return binding.root
     }
-
-
-
 }
