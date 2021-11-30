@@ -2,11 +2,8 @@ package com.example.flixter2.fragments.details
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -24,7 +21,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrC
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
 
 
-class DetailFragment : Fragment() {
+class DetailFragment : Fragment(R.layout.fragment_detail) {
 
     private lateinit var viewModel: DetailViewModel
     private lateinit var viewModelFactory: DetailViewModelFactory
@@ -36,23 +33,17 @@ class DetailFragment : Fragment() {
     private lateinit var youTubePlayerView: YouTubePlayerView
     private lateinit var listener: YouTubePlayerListener
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
         // Inflate the layout for this fragment
-        val binding: FragmentDetailBinding =
-            DataBindingUtil.inflate(inflater, R.layout.fragment_detail, container, false)
+        val binding: FragmentDetailBinding = FragmentDetailBinding.bind(view)
 
         var args = DetailFragmentArgs.fromBundle(requireArguments())
 
         viewModelFactory = DetailViewModelFactory(args.movie, MovieApiRepository())
-        viewModel = ViewModelProvider(this,viewModelFactory).get(DetailViewModel::class.java)
+        viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
 
         binding.movie = args.movie
-
-        Log.i(TAG, args.movie.title)
 
         youTubePlayerView = binding.youtubePlayerView
         lifecycle.addObserver(youTubePlayerView)
@@ -64,38 +55,27 @@ class DetailFragment : Fragment() {
                     initializeYoutube(key)
                 }
 
-                Resource.STATUS.LOADING ->{
-
-                }
-
                 Resource.STATUS.ERROR -> {
-                    //Log.i(TAG, it.message.toString())
                     youTubePlayerView.release()
                     Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 }
             }
         })
-
-
-        return binding.root
     }
 
 
     private fun initializeYoutube(youtubeKey: String) {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
-
-                //tracker = YouTubePlayerTracker()
                 val playVideo = viewModel.playVideo.value
-                //Log.i(TAG, "playVideo: " + playVideo.toString())
                 val seconds = viewModel.seconds.value
-                if(playVideo == true) {
+                if (playVideo == true) {
                     if (seconds != null) {
                         youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
                     }
-                }else{
+                } else {
                     if (seconds != null) {
-                        youTubePlayer.cueVideo(youtubeKey,seconds)
+                        youTubePlayer.cueVideo(youtubeKey, seconds)
                     }
                 }
 
@@ -106,12 +86,11 @@ class DetailFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        //Log.i(TAG, tracker.state.toString())
-        //Log.i(TAG, tracker.videoDuration.toString())
-        if(tracker.state == PlayerConstants.PlayerState.ENDED ||
-            tracker.state == PlayerConstants.PlayerState.VIDEO_CUED){
+        if (tracker.state == PlayerConstants.PlayerState.ENDED ||
+            tracker.state == PlayerConstants.PlayerState.VIDEO_CUED
+        ) {
             viewModel.stopVideo()
-        }else if(tracker.state == PlayerConstants.PlayerState.PLAYING){
+        } else if (tracker.state == PlayerConstants.PlayerState.PLAYING) {
             viewModel.keepPlaying()
         }
         viewModel.trackSeconds(tracker.currentSecond)
