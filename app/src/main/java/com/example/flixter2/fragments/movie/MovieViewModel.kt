@@ -8,13 +8,11 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApiRepository
+import javax.inject.Inject
 
 
-class MovieViewModel(private val repository: MovieApiRepository): ViewModel() {
-
-    private val NOW_PLAY_URL: String = "https://api.themoviedb.org/3/movie/now_playing?api_key=a07e22bc18f5cb106bfe4cc1f83ad8ed"
+class MovieViewModel @Inject constructor(private val repository: MovieApiRepository): ViewModel() {
     private val TAG: String = "MovieViewModel"
-
 
     private val _movies = repository.getLatestMovies().cachedIn(viewModelScope)
 
