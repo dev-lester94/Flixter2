@@ -61,6 +61,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
 
         viewModel.youtubeKey.observe(viewLifecycleOwner, Observer {
             when (it.status) {
+                Resource.STATUS.LOADING ->{}
                 Resource.STATUS.SUCCESS -> {
                     val key = (it.data as YoutubeVideos).results[0].key
                     initializeYoutube(key)

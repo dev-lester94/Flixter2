@@ -8,7 +8,7 @@ import java.io.IOException
 
 private const val MOVIE_STARTING_PAGE_INDEX = 1
 
-class MoviePagingSource(private val movieApiService: MovieApiService) : PagingSource<Int, Movie>() {
+class MoviePagingSource(private val movieApiService: MovieApiService, private val API_KEY: String) : PagingSource<Int, Movie>() {
     private val TAG = "MovingPagingSource"
     override fun getRefreshKey(state: PagingState<Int, Movie>): Int? {
         return state.anchorPosition?.let { anchorPosition ->
@@ -22,7 +22,7 @@ class MoviePagingSource(private val movieApiService: MovieApiService) : PagingSo
         Log.i(TAG, "position: $position")
 
         return try{
-            val response: LatestMovies = movieApiService.getLatestMovies("a07e22bc18f5cb106bfe4cc1f83ad8ed", position)
+            val response: LatestMovies = movieApiService.getLatestMovies(API_KEY, position)
             val movies = response.results
             LoadResult.Page(
                     data = movies,
