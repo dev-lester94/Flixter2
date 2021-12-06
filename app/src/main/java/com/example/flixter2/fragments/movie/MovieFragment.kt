@@ -1,9 +1,11 @@
 package com.example.flixter2.fragments.movie
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -12,10 +14,14 @@ import androidx.paging.LoadState
 import com.example.flixter2.R
 import com.example.flixter2.adapters.*
 import com.example.flixter2.databinding.FragmentMovieBinding
+import com.example.flixter2.di.AppComponent
+import com.example.flixter2.di.MyApplication
 import com.example.flixter2.network.Movie
 import com.example.flixter2.network.MovieApiRepository
+import dagger.android.support.AndroidSupportInjection.inject
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 /**
  * A simple [Fragment] subclass.
@@ -24,23 +30,23 @@ import kotlinx.coroutines.launch
  */
 class MovieFragment : Fragment(R.layout.fragment_movie) {
 
-    private lateinit var viewModel: MovieViewModel;
-    val TAG = "MovieFragment"
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        (activity?.applicationContext as MyApplication).appComponent.inject(this)
+    }
 
+    @Inject
+    lateinit var viewModelFactory: ViewModelProvider.Factory
+    private val viewModel: MovieViewModel by viewModels {viewModelFactory}
+
+    val TAG = "MovieFragment"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inflate the layout for this fragment
 
         val binding: FragmentMovieBinding = FragmentMovieBinding.bind(view)
 
         // Allows Data Binding to Observe LiveData with the lifecycle of this Fragment
         binding.lifecycleOwner = this
-
-        val repository = MovieApiRepository()
-        viewModel = ViewModelProvider(this, MovieViewModelFactory(repository))
-            .get(MovieViewModel::class.java)
-
 
         val clickListener = BaseViewHolder.ItemSelectedListener {
             findNavController().navigate(

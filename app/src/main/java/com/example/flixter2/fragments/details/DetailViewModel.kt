@@ -3,15 +3,26 @@ package com.example.flixter2.fragments.details
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
-import com.example.flixter2.network.*
+import com.example.flixter2.network.Movie
+import com.example.flixter2.network.MovieApiRepository
+import com.example.flixter2.network.YoutubeVideos
 import com.example.flixter2.utils.Resource
+import javax.inject.Inject
 
-class DetailViewModel(private val movie: Movie, private val repository: MovieApiRepository): ViewModel() {
+class DetailViewModel @Inject constructor(private val repository: MovieApiRepository) :
+    ViewModel() {
 
     private val TAG = "DetailViewModel"
 
-    private var _youtubeKey = repository.getYoutubeKey(movieId = movie.id)
+    private val movieBacking = MutableLiveData<Movie>()
+
+    private var _youtubeKey: LiveData<out Resource<out YoutubeVideos>> =
+        Transformations.switchMap(movieBacking) { movie ->
+            repository.getYoutubeKey(movieId = movie.id)
+        }
+
     val youtubeKey: LiveData<out Resource<out YoutubeVideos>>
         get() = _youtubeKey
 
@@ -31,7 +42,6 @@ class DetailViewModel(private val movie: Movie, private val repository: MovieApi
     }
 
 
-
     fun trackSeconds(currentSecond: Float) {
         _seconds.value = currentSecond
     }
@@ -46,5 +56,7 @@ class DetailViewModel(private val movie: Movie, private val repository: MovieApi
         _playVideo.value = true
     }
 
-
+    fun setMovie(movie: Movie) {
+        movieBacking.value = movie
+    }
 }
