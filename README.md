@@ -6,5 +6,5 @@ https://developers.themoviedb.org/3/getting-started/introduction
 <br/>
 <br/>
 # Installation: <br/>
-Obtain an MovieDB API_KEY using the link above and add your key in local.properties, 
+Obtain an MovieDB API_KEY using the link above and add your key in local.properties API_KEY="YOUR_API_KEY_STRING", 
 may need to rebuild project. Once done, set up complete and the app should run!!!
