@@ -5,4 +5,6 @@ Youtube trailer and get details such as ratings and description<br/>
 https://developers.themoviedb.org/3/getting-started/introduction 
 <br/>
 <br/>
-Obtain an MovieDB API_KEY using the link above and add your key in local.properties
+#Installation: <br/>
+Obtain an MovieDB API_KEY using the link above and add your key in local.properties, 
+may need to rebuild project. Once done, set up complete and the app should run!!!
