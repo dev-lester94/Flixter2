@@ -12,21 +12,10 @@ import javax.inject.Inject
 
 
 class MovieViewModel @Inject constructor(private val repository: MovieApiRepository): ViewModel() {
-    private val TAG: String = "MovieViewModel"
 
     private val _movies = repository.getLatestMovies().cachedIn(viewModelScope)
 
     val movies: LiveData<PagingData<Movie>>
         get() = _movies
-
-    init {
-        Log.i(TAG, "Initialize")
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.i(TAG, "onCleared")
-    }
 
 }

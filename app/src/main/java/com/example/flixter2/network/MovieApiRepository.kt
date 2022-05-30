@@ -9,11 +9,11 @@ import com.example.flixter2.utils.get
 import javax.inject.Inject
 
 
-class MovieApiRepository @Inject constructor(private val movieApiService: MovieApiService)  {
+open class MovieApiRepository @Inject constructor(private val movieApiService: MovieApiService)  {
     private val API_KEY: String = BuildConfig.API_KEY
 
     val TAG = "MovieApiRepository"
-    fun getLatestMovies() = Pager(
+    open fun getLatestMovies() = Pager(
         config = PagingConfig(
             pageSize = 10,
             maxSize = 100

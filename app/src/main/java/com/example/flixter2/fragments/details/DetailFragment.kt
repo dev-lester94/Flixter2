@@ -37,12 +37,9 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: DetailViewModel by viewModels {viewModelFactory}
 
-    val TAG: String = "DetailFragment"
-
     private var tracker: YouTubePlayerTracker = YouTubePlayerTracker()
 
     private lateinit var youTubePlayerView: YouTubePlayerView
-    private lateinit var listener: YouTubePlayerListener
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -59,7 +56,7 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
         youTubePlayerView = binding.youtubePlayerView
         lifecycle.addObserver(youTubePlayerView)
 
-        viewModel.youtubeKey.observe(viewLifecycleOwner, Observer {
+        viewModel.youtubeKey.observe(viewLifecycleOwner, {
             when (it.status) {
                 Resource.STATUS.LOADING ->{}
                 Resource.STATUS.SUCCESS -> {
@@ -79,16 +76,13 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     private fun initializeYoutube(youtubeKey: String) {
         youTubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
-                val playVideo = viewModel.playVideo.value
-                val seconds = viewModel.seconds.value
+                val playVideo = viewModel.playVideo()
+                val seconds = viewModel.getSeconds()
                 if (playVideo == true) {
-                    if (seconds != null) {
-                        youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
-                    }
+                    youTubePlayer.loadOrCueVideo(lifecycle, youtubeKey, seconds)
                 } else {
-                    if (seconds != null) {
-                        youTubePlayer.cueVideo(youtubeKey, seconds)
-                    }
+                    youTubePlayer.cueVideo(youtubeKey, seconds)
+
                 }
 
                 youTubePlayer.addListener(tracker);
@@ -98,16 +92,25 @@ class DetailFragment : Fragment(R.layout.fragment_detail) {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         if (tracker.state == PlayerConstants.PlayerState.ENDED ||
-            tracker.state == PlayerConstants.PlayerState.VIDEO_CUED
+            tracker.state == PlayerConstants.PlayerState.VIDEO_CUED ||
+            tracker.state == PlayerConstants.PlayerState.PAUSED
         ) {
             viewModel.stopVideo()
         } else if (tracker.state == PlayerConstants.PlayerState.PLAYING) {
             viewModel.keepPlaying()
         }
-        viewModel.trackSeconds(tracker.currentSecond)
+        if(tracker.currentSecond == 0F){
+            if(viewModel.getSeconds() != 0F) {
+                viewModel.trackSeconds(viewModel.getSeconds())
+            }else {
+                viewModel.trackSeconds(tracker.currentSecond)
+            }
+        }else{
+            viewModel.trackSeconds(tracker.currentSecond)
+        }
         youTubePlayerView.release()
-        super.onDestroy()
     }
 
 }

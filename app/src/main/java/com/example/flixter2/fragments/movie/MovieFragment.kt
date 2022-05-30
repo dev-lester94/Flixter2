@@ -39,7 +39,6 @@ class MovieFragment : Fragment(R.layout.fragment_movie) {
     lateinit var viewModelFactory: ViewModelProvider.Factory
     private val viewModel: MovieViewModel by viewModels {viewModelFactory}
 
-    val TAG = "MovieFragment"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 

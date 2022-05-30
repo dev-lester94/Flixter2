@@ -26,34 +26,36 @@ class DetailViewModel @Inject constructor(private val repository: MovieApiReposi
     val youtubeKey: LiveData<out Resource<out YoutubeVideos>>
         get() = _youtubeKey
 
-    private val _seconds = MutableLiveData<Float>()
-    val seconds: LiveData<Float>
-        get() = _seconds
+    private var _seconds: Float
 
-    private var _playVideo = MutableLiveData<Boolean>()
-    val playVideo: LiveData<Boolean>
-        get() = _playVideo
+
+    private var _playVideo: Boolean
 
 
     init {
-        _seconds.value = 0F
-        _playVideo.value = true
-        Log.i(TAG, "playVideo: " + playVideo.value.toString())
+        _seconds = 0F
+        _playVideo= true
     }
 
 
     fun trackSeconds(currentSecond: Float) {
-        _seconds.value = currentSecond
+        _seconds = currentSecond
+    }
+
+    fun getSeconds(): Float{
+        return _seconds
     }
 
     fun stopVideo() {
-        Log.i(TAG, "stopvideo")
-        _playVideo.value = false
+        _playVideo = false
     }
 
     fun keepPlaying() {
-        Log.i(TAG, "keepplayign")
-        _playVideo.value = true
+        _playVideo = true
+    }
+
+    fun playVideo(): Boolean{
+        return _playVideo
     }
 
     fun setMovie(movie: Movie) {

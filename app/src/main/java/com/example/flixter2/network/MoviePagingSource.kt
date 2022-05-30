@@ -6,7 +6,7 @@ import androidx.paging.PagingState
 import retrofit2.HttpException
 import java.io.IOException
 
-private const val MOVIE_STARTING_PAGE_INDEX = 1
+const val MOVIE_STARTING_PAGE_INDEX = 1
 
 class MoviePagingSource(private val movieApiService: MovieApiService, private val API_KEY: String) : PagingSource<Int, Movie>() {
     private val TAG = "MovingPagingSource"
@@ -19,7 +19,6 @@ class MoviePagingSource(private val movieApiService: MovieApiService, private va
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         var position = params.key ?: MOVIE_STARTING_PAGE_INDEX
-        Log.i(TAG, "position: $position")
 
         return try{
             val response: LatestMovies = movieApiService.getLatestMovies(API_KEY, position)
